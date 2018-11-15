@@ -1,5 +1,5 @@
 package com.qa.business;
-import java.util.List;
+
 
 import javax.inject.Inject;
 
@@ -13,7 +13,7 @@ public class Business  implements BusinessService {
 private AccountReposity account ; 
 
 
-public List<Account> findallaccounts()
+public String findallaccounts()
 {
 	
 	return account.findallaccounts(); 
@@ -28,13 +28,13 @@ public Account findaccount (Long id )
 {
 	return account.findaccount(id); 
 }
-public Account AccountUpdate (Account account_details , Long id)
+public String  AccountUpdate (String account_details , Long id)
 {
 	return account.AccountUpdate(account_details, id); 
 }
-public void AccountRemove(Long id)
+public String AccountRemove(Long id)
 {
-	account.AccountRemove(id);
+	return account.AccountRemove(id);
 }
 
 

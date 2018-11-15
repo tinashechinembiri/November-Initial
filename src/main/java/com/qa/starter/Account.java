@@ -18,7 +18,10 @@ public class Account {
 	@Column (length = 10)
 	private int Account_number; 
 	
-	
+	public Account ()
+	{
+		
+	}
 	
 	public Account(Long id, String firstName, String secondName, int account_number) {
 		super();

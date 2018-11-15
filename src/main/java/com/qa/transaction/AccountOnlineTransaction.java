@@ -1,7 +1,7 @@
 package com.qa.transaction;
 
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 import javax.enterprise.inject.Alternative;
@@ -18,7 +18,7 @@ public class AccountOnlineTransaction implements AccountReposity{
 	@Inject
 	JSONUtil util; 
 	
-	
+	private final Long INITIAL_COUNT = 1L; 
 	private Map <Long, Account> accountDetails;
 	@PersistenceContext(unitName ="primary")
 	private EntityManager manager; 
@@ -26,12 +26,13 @@ public class AccountOnlineTransaction implements AccountReposity{
 	
 	 AccountOnlineTransaction(){
 		this.accountDetails = new HashMap <Long,Account>(); 
+		ID = INITIAL_COUNT; 
 	 }
 	
 	@Override
-	public List<Account> findallaccounts()
+	public String findallaccounts()
 	{
-		return (List<Account>) accountDetails.values(); 
+		return util.getJSONForObject(accountDetails.values()); 
 	}
 
 	@Override
@@ -49,15 +50,16 @@ public class AccountOnlineTransaction implements AccountReposity{
 	}
 
 	@Override
-	public Account AccountUpdate(Account account_details, Long id) {
-		Account a = JSONUtil.getObjectForJSON(account_details.toString(), Account.class); 
+	public String AccountUpdate(String account_details, Long id) {
+		Account a = JSONUtil.getObjectForJSON(account_details, Account.class); 
 		accountDetails.put(id, a);
-		return a; 
+		return account_details ; 
 	}
 
 	@Override
-	public void AccountRemove(Long id) {
+	public String AccountRemove(Long id) {
 		accountDetails.remove(id); 
+		return "{\"message\":}\"succesfully removed\""; 
 		
 	}
 	

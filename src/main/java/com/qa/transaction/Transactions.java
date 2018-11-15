@@ -1,13 +1,16 @@
 package com.qa.transaction;
 
-import java.util.List;
+import java.util.Collection;
+
 import static javax.transaction.Transactional.TxType.SUPPORTS;
 import static javax.transaction.Transactional.TxType.REQUIRED;
 
 import javax.enterprise.inject.Default;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.Query;
+
 import javax.transaction.Transactional;
 
 import com.qa.starter.Account;
@@ -16,15 +19,16 @@ import com.qa.util.JSONUtil;
 
 @Transactional(SUPPORTS)
 public class Transactions implements AccountReposity {
-
+	@Inject
+	JSONUtil util; 
 	@PersistenceContext(unitName ="primary")
 	private EntityManager manager; 
 	
-	public List<Account> findallaccounts ()
+	public String findallaccounts ()
 	{
-		TypedQuery<Account>  query = manager.createQuery("SELECT i FROM Account m ORDER BY m.Account_number DESC", Account.class);
-		
-		return query.getResultList(); 
+		Query  check = manager.createQuery("SELECT a FROM Account a");
+		Collection <Account>  query = (Collection<Account>) check.getResultList(); 
+		 return util.getJSONForObject(query); 
 	}
 	
 	 
@@ -43,18 +47,23 @@ public class Transactions implements AccountReposity {
 		return account_details; 
 	}
 	@Transactional(REQUIRED)
-	public Account  AccountUpdate (Account account_details , Long id)
+	public String  AccountUpdate (String account_details , Long id)
 	{
-		
+		Account updateaccount  = JSONUtil.getObjectForJSON(account_details, Account.class); 
 		Account a = findaccount(id);
-		a.setAccount_number(account_details.getAccount_number());
-		a.setFirstName(account_details.getFirstName());
-		a.setSecondName(account_details.getSecondName());
-		manager.merge(a);
-		return a; 
+		//a.setAccount_number(account_details.getAccount_number());
+		//a.setFirstName(account_details.getFirstName());
+		//a.setSecondName(account_details.getSecondName());
+		if (account_details !=null)
+		{
+			a = updateaccount; 
+			manager.merge(a);
+		}
+		
+		return account_details ; 
 	}
 	@Transactional(REQUIRED)
-	public void AccountRemove (Long id)
+	public String AccountRemove (Long id)
 	{
 		Account account_delete = findaccount(id);
 		if (account_delete != null)
@@ -62,6 +71,7 @@ public class Transactions implements AccountReposity {
 		
 		manager.remove(account_delete);
 		}
+		return "{\\\"message\\\":}\\\"succesfully removed\\\"";
 	}
 
 
